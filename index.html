@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pi Services Hub by Asiq</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        :root {
+            --primary: #2196f3;
+            --primary-light: #64b5f6;
+            --background: #0a1929;
+            --card-bg: #132f4c;
+            --text: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.85);
+            --card-hover: #1a3b5f;
+            --header-bg: rgba(19, 47, 76, 0.95);
+        }
+
+        body {
+            background-color: var(--background);
+            min-height: 100vh;
+            color: var(--text);
+            line-height: 1.5;
+            letter-spacing: 0.015em;
+        }
+
+        .navbar {
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .navbar-content {
+            display: flex;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        .navbar-title {
+            margin-left: 0.75rem;
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 5rem 1rem 2rem;
+        }
+
+        .global-controls {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 2rem;
+            gap: 1rem;
+        }
+
+        .control-button {
+            background: var(--card-bg);
+            border: none;
+            color: var(--text);
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .control-button:hover {
+            background: var(--primary);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .service-group {
+            margin-bottom: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .group-header {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--header-bg);
+            transition: all 0.3s ease;
+        }
+
+        .group-header:hover {
+            background: var(--card-hover);
+        }
+
+        .group-header i {
+            color: var(--primary);
+            transition: transform 0.3s ease;
+            font-size: 1.5rem;
+        }
+
+        .group-header.collapsed i.expand-icon {
+            transform: rotate(-90deg);
+        }
+
+        .group-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .services-grid.collapsed {
+            display: none;
+        }
+
+        .service-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+            text-decoration: none;
+            color: var(--text);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, var(--primary), var(--primary-light));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            background: var(--card-hover);
+        }
+
+        .service-card:hover::before {
+            opacity: 0.1;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .service-description {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .control-button {
+                padding: 0.5rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            .service-name {
+                font-size: 1.125rem;
+            }
+
+            .service-description {
+                font-size: 0.875rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-content">
+            <i class="material-icons">dns</i>
+            <span class="navbar-title">Pi Services Hub</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="global-controls">
+            <button class="control-button" onclick="toggleAllGroups('expand')">
+                <i class="material-icons">unfold_more</i>
+                Expand All
+            </button>
+            <button class="control-button" onclick="toggleAllGroups('collapse')">
+                <i class="material-icons">unfold_less</i>
+                Collapse All
+            </button>
+        </div>
+
+        <!-- Dashboard Services -->
+        <div class="service-group">
+            <div class="group-header" onclick="toggleGroup(this)">
+                <i class="material-icons expand-icon">expand_more</i>
+                <div class="group-title">
+                    <i class="material-icons">dashboard</i>
+                    Dashboard
+                </div>
+            </div>
+            <div class="services-grid">
+                <a href="http://103.175.130.129:5252" class="service-card">
+                    <div class="card-content">
+                        <i class="material-icons service-icon">dashboard</i>
+                        <div class="service-name">Pi</div>
+                        <div class="service-description">Pi-Dashboard</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Media Services -->
+        <div class="service-group">
+            <div class="group-header" onclick="toggleGroup(this)">
+                <i class="material-icons expand-icon">expand_more</i>
+                <div class="group-title">
+                    <i class="material-icons">movie</i>
+                    Media Services
+                </div>
+            </div>
+            <div class="services-grid">
+                <a href="http://pi.local:32400" class="service-card">
+                    <div class="card-content">
+                        <i class="material-icons service-icon">movie</i>
+                        <div class="service-name">Plex</div>
+                        <div class="service-description">Media streaming server</div>
+                    </div>
+                </a>
+                <a href="http://pi.local:8096" class="service-card">
+                    <div class="card-content">
+                        <i class="material-icons service-icon">live_tv</i>
+                        <div class="service-name">Jellyfin</div>
+                        <div class="service-description">Media system</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Network Services -->
+        <div class="service-group">
+            <div class="group-header" onclick="toggleGroup(this)">
+                <i class="material-icons expand-icon">expand_more</i>
+                <div class="group-title">
+                    <i class="material-icons">router</i>
+                    Network Services
+                </div>
+            </div>
+            <div class="services-grid">
+                <a href="http://pi.local/admin" class="service-card">
+                    <div class="card-content">
+                        <i class="material-icons service-icon">security</i>
+                        <div class="service-name">Pi-hole</div>
+                        <div class="service-description">Network-wide ad blocking</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Smart Home -->
+        <div class="service-group">
+            <div class="group-header" onclick="toggleGroup(this)">
+                <i class="material-icons expand-icon">expand_more</i>
+                <div class="group-title">
+                    <i class="material-icons">home</i>
+                    Smart Home
+                </div>
+            </div>
+            <div class="services-grid">
+                <a href="http://pi.local:8123" class="service-card">
+                    <div class="card-content">
+                        <i class="material-icons service-icon">home</i>
+                        <div class="service-name">Home Assistant</div>
+                        <div class="service-description">Home automation</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Storage -->
+        <div class="service-group">
+            <div class="group-header" onclick="toggleGroup(this)">
+                <i class="material-icons expand-icon">expand_more</i>
+                <div class="group-title">
+                    <i class="material-icons">cloud</i>
+                    Storage
+                </div>
+            </div>
+            <div class="services-grid">
+                <a href="http://pi.local/nextcloud" class="service-card">
+                    <div class="card-content">
+                        <i class="material-icons service-icon">cloud</i>
+                        <div class="service-name">Nextcloud</div>
+                        <div class="service-description">File sync & share</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleGroup(header) {
+            const group = header.parentElement;
+            const grid = group.querySelector('.services-grid');
+            const icon = header.querySelector('.expand-icon');
+            
+            header.classList.toggle('collapsed');
+            grid.classList.toggle('collapsed');
+        }
+
+        function toggleAllGroups(action) {
+            const headers = document.querySelectorAll('.group-header');
+            const grids = document.querySelectorAll('.services-grid');
+            
+            headers.forEach(header => {
+                if (action === 'collapse') {
+                    header.classList.add('collapsed');
+                } else {
+                    header.classList.remove('collapsed');
+                }
+            });
+            
+            grids.forEach(grid => {
+                if (action === 'collapse') {
+                    grid.classList.add('collapsed');
+                } else {
+                    grid.classList.remove('collapsed');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
